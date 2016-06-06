@@ -16,7 +16,7 @@ from subprocess import Popen
 
 Sentence = namedtuple('Sentence', ['words', 'lemmas', 'poses', 'dep_parents',
                                    'dep_labels', 'sent_id', 'doc_id', 'text',
-                                   'token_idxs', 'doc_name'])
+                                   'token_idxs', 'doc_name','ners'])
 
 class SentenceParser:
     def __init__(self, tok_whitespace=False):
@@ -33,7 +33,7 @@ class SentenceParser:
         self.server_pid = Popen(cmd, shell=True).pid
         atexit.register(self._kill_pserver)
         props = "\"tokenize.whitespace\": \"true\"," if self.tok_whitespace else "" 
-        self.endpoint = 'http://127.0.0.1:%d/?properties={%s"annotators": "tokenize,ssplit,pos,lemma,depparse", "outputFormat": "json"}' % (self.port, props)
+        self.endpoint = 'http://127.0.0.1:%d/?properties={%s"annotators": "tokenize,ssplit,pos,lemma,depparse,ner", "outputFormat": "json"}' % (self.port, props)
 
         # Following enables retries to cope with CoreNLP server boot-up latency
         # See: http://stackoverflow.com/a/35504626
@@ -76,6 +76,7 @@ class SentenceParser:
                 parts['lemmas'].append(tok['lemma'])
                 parts['poses'].append(tok['pos'])
                 parts['token_idxs'].append(tok['characterOffsetBegin'])
+                parts['ners'].append(tok['ner'])
                 dep_par.append(deps['governor'])
                 dep_lab.append(deps['dep'])
                 dep_order.append(deps['dependent'])

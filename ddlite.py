@@ -591,8 +591,8 @@ class CandidateGT:
     np.random.shuffle(h)
     self.validation = h[ : np.floor(validation_frac * len(h))]
     self.test = h[np.floor(validation_frac * len(h)) : ]
-    self._update_training()
-    self._update_devs(self.dev_split)
+    #self._update_training()
+    #self._update_devs(self.dev_split)
     
   def _update_devs(self, dev_split):
     idxs,_ = self.get_labeled_ground_truth('training')
@@ -1287,7 +1287,7 @@ def main():
 
   print "***** Relation 0 *****"
   R = Relations(sents, g, b)
-  print R
+  print R[0].doc_id
   print R[0].mention1()
   print R[0].mention2()
   print R[0].tagged_sent
